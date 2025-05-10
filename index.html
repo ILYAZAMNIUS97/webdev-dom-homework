@@ -64,8 +64,84 @@
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+
+// Получаем доступ к элементам формы
+const nameInput = document.querySelector('.add-form-name');
+const commentTextarea = document.querySelector('.add-form-text');
+const addButton = document.querySelector('.add-form-button');
+const commentsList = document.querySelector('.comments');
+
+// Создаем переменные для хранения введенных пользователем данных
+let userName = '';
+let commentText = '';
+
+// Обработчик события на изменение поля ввода имени
+nameInput.addEventListener('input', function() {
+  userName = nameInput.value;
+});
+
+// Обработчик события на изменение поля ввода комментария
+commentTextarea.addEventListener('input', function() {
+  commentText = commentTextarea.value;
+});
+
+// Функция для получения текущей даты и времени в формате "ДД.ММ.ГГ ЧЧ:ММ"
+function getCurrentDateTime() {
+  const now = new Date();
+  
+  // Получаем день, месяц, год
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = String(now.getFullYear()).slice(-2);
+  
+  // Получаем часы и минуты
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  
+  // Формируем строку даты и времени в нужном формате
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
+// Обработчик события на нажатие кнопки "Написать"
+addButton.addEventListener('click', function() {
+  // Проверяем, что пользователь ввел имя и текст комментария
+  if (userName.trim() === '' || commentText.trim() === '') {
+    alert('Пожалуйста, введите имя и текст комментария');
+    return;
+  }
+  
+  // Получаем текущую дату и время
+  const dateTime = getCurrentDateTime();
+  
+  // Создаем шаблонную строку нового комментария
+  const newCommentHTML = `
+    <li class="comment">
+      <div class="comment-header">
+        <div>${userName}</div>
+        <div>${dateTime}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${commentText}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>
+  `;
+  
+  // Добавляем новый комментарий в конец списка комментариев
+  commentsList.innerHTML += newCommentHTML;
+  
+  // Очищаем поля ввода после добавления комментария
+  nameInput.value = '';
+  commentTextarea.value = '';
+  userName = '';
+  commentText = '';
+});
   </script>
 </html>
