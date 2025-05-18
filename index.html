@@ -29,7 +29,7 @@
   </body>
 
   <script>
-    // Домашняя работа №2 "Лента комментариев. Реализация функционала"
+    // Домашняя работа №3 "Лента комментариев. Реализация функционала"
     const nameInput = document.querySelector('.add-form-name');
     const commentTextarea = document.querySelector('.add-form-text');
     const addButton = document.querySelector('.add-form-button');
@@ -76,16 +76,25 @@
       return `${day}.${month}.${year} ${hours}:${minutes}`;
     };
 
+    const escapeHtml = (text) => {
+      return text
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;')
+        .replaceAll('&', '&amp;');
+    };
+
     const renderComments = () => {
       commentsList.innerHTML = comments.map(comment => `
         <li class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div>${escapeHtml(comment.name)}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text}
+              ${escapeHtml(comment.text)}
             </div>
           </div>
           <div class="comment-footer">
@@ -99,10 +108,21 @@
 
       document.querySelectorAll('.like-button').forEach(button => {
         button.addEventListener('click', (event) => {
+          event.stopPropagation();
           const index = event.target.dataset.index;
           comments[index].isLiked = !comments[index].isLiked;
           comments[index].likes += comments[index].isLiked ? 1 : -1;
           renderComments();
+        });
+      });
+
+      document.querySelectorAll('.comment').forEach(comment => {
+        comment.addEventListener('click', (event) => {
+          const index = event.currentTarget.querySelector('.like-button').dataset.index;
+          nameInput.value = comments[index].name;
+          commentTextarea.value = `> ${comments[index].name}: ${comments[index].text}\n\n`;
+          userName = comments[index].name;
+          commentText = commentTextarea.value;
         });
       });
     };
