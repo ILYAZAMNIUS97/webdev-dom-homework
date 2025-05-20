@@ -29,7 +29,7 @@
   </body>
 
   <script>
-    // Домашняя работа №2 "Лента комментариев. Реализация функционала"
+    // Домашняя работа №3 "Лента комментариев"
     const nameInput = document.querySelector('.add-form-name');
     const commentTextarea = document.querySelector('.add-form-text');
     const addButton = document.querySelector('.add-form-button');
@@ -78,10 +78,10 @@
 
     const escapeHtml = (text) => {
       return text
-        .replaceAll('&', '&amp;')  // 1. Сначала заменяем амперсанды
-        .replaceAll('<', '&lt;')   // 2. Затем угловые скобки
+        .replaceAll('&', '&amp;')  
+        .replaceAll('<', '&lt;')   
         .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;') // 3. Затем кавычки
+        .replaceAll('"', '&quot;') 
         .replaceAll("'", '&#039;');
     };
 
