@@ -29,7 +29,7 @@
   </body>
 
   <script>
-    // Домашняя работа №3 "Лента комментариев. Реализация функционала"
+    // Домашняя работа №2 "Лента комментариев. Реализация функционала"
     const nameInput = document.querySelector('.add-form-name');
     const commentTextarea = document.querySelector('.add-form-text');
     const addButton = document.querySelector('.add-form-button');
@@ -78,11 +78,11 @@
 
     const escapeHtml = (text) => {
       return text
-        .replaceAll('<', '&lt;')
+        .replaceAll('&', '&amp;')  // 1. Сначала заменяем амперсанды
+        .replaceAll('<', '&lt;')   // 2. Затем угловые скобки
         .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;')
-        .replaceAll('&', '&amp;');
+        .replaceAll('"', '&quot;') // 3. Затем кавычки
+        .replaceAll("'", '&#039;');
     };
 
     const renderComments = () => {
@@ -119,9 +119,7 @@
       document.querySelectorAll('.comment').forEach(comment => {
         comment.addEventListener('click', (event) => {
           const index = event.currentTarget.querySelector('.like-button').dataset.index;
-          nameInput.value = comments[index].name;
           commentTextarea.value = `> ${comments[index].name}: ${comments[index].text}\n\n`;
-          userName = comments[index].name;
           commentText = commentTextarea.value;
         });
       });
