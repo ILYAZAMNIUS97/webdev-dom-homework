@@ -32,14 +32,12 @@ export const addFormHandlers = (onSubmit) => {
       isLiked: false,
     });
 
-    // Очищаем форму
     nameInput.value = "";
     commentTextarea.value = "";
     userName = "";
     commentText = "";
   });
 
-  // Возвращаем функцию для установки текста в textarea
   return {
     setCommentText: (text) => {
       commentTextarea.value = text;

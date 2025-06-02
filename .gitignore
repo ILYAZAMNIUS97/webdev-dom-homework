@@ -1,0 +1,8 @@
+# Игнорировать node_modules
+node_modules/
+
+# Дополнительно (если есть):
+.env
+.DS_Store
+dist/
+*.log

@@ -29,7 +29,6 @@ export const renderComments = (comments, onLike, onReply) => {
     )
     .join("");
 
-  // Добавляем обработчики после рендера
   addLikeHandlers(onLike);
   addReplyHandlers(onReply);
 };

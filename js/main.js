@@ -10,12 +10,10 @@ class CommentsApp {
   }
 
   init() {
-    // Инициализируем обработчики формы
     this.formControls = addFormHandlers((newComment) => {
       this.addComment(newComment);
     });
 
-    // Первоначальный рендер
     this.render();
   }
 
@@ -45,5 +43,4 @@ class CommentsApp {
   }
 }
 
-// Запускаем приложение
 new CommentsApp();
