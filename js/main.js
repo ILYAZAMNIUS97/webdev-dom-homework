@@ -1,15 +1,21 @@
-import { commentsData } from "./data/comments.js";
+import { fetchComments } from "./data/comments.js";
 import { renderComments } from "./components/commentsRenderer.js";
 import { addFormHandlers } from "./handlers/formHandlers.js";
 
 class CommentsApp {
   constructor() {
-    this.comments = [...commentsData];
+    this.comments = [];
     this.formControls = null;
     this.init();
   }
 
-  init() {
+  async init() {
+    try {
+      this.comments = await fetchComments();
+    } catch (error) {
+      console.error("Не удалось загрузить комментарии:", error);
+    }
+
     this.formControls = addFormHandlers((newComment) => {
       this.addComment(newComment);
     });
@@ -30,7 +36,7 @@ class CommentsApp {
 
   replyToComment(index) {
     const comment = this.comments[index];
-    const replyText = `> ${comment.name}: ${comment.text}\n\n`;
+    const replyText = `> ${comment.name}: ${comment.text}\n`;
     this.formControls.setCommentText(replyText);
   }
 

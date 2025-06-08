@@ -16,26 +16,47 @@ export const addFormHandlers = (onSubmit) => {
     commentText = commentTextarea.value;
   });
 
-  addButton.addEventListener("click", () => {
-    if (userName.trim() === "" || commentText.trim() === "") {
-      alert("Пожалуйста, введите имя и текст комментария");
+  addButton.addEventListener("click", async () => {
+    if (userName.trim().length < 3 || commentText.trim().length < 3) {
+      alert("Имя и текст должны быть не короче 3 символов");
       return;
     }
 
     const dateTime = getCurrentDateTime();
 
-    onSubmit({
-      name: userName,
-      date: dateTime,
-      text: commentText,
-      likes: 0,
-      isLiked: false,
-    });
+    try {
+      const response = await fetch(
+        "https://wedev-api.sky.pro/api/v1/ilya-zamnius/comments",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: userName,
+            text: commentText,
+          }),
+        }
+      );
 
-    nameInput.value = "";
-    commentTextarea.value = "";
-    userName = "";
-    commentText = "";
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.error || "Не удалось отправить комментарий");
+        return;
+      }
+
+      onSubmit({
+        name: userName,
+        date: dateTime,
+        text: commentText,
+        likes: 0,
+        isLiked: false,
+      });
+
+      nameInput.value = "";
+      commentTextarea.value = "";
+      userName = "";
+      commentText = "";
+    } catch (error) {
+      alert("Произошла ошибка при отправке запроса");
+    }
   });
 
   return {
