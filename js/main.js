@@ -2,6 +2,7 @@
 import { fetchComments } from "./data/comments.js";
 import { renderComments } from "./components/commentsRenderer.js";
 import { addFormHandlers } from "./handlers/formHandlers.js";
+import { addLikeHandlers } from "./handlers/likeHandlers.js";
 
 class CommentsApp {
   constructor() {
@@ -11,12 +12,10 @@ class CommentsApp {
   }
 
   async init() {
-    this.showLoadingMessage();
-
     try {
       this.comments = await fetchComments();
-    } finally {
-      this.hideLoadingMessage();
+    } catch (e) {
+      console.error("Не удалось загрузить комментарии", e);
     }
 
     this.formControls = addFormHandlers((newComment) => {
@@ -49,25 +48,8 @@ class CommentsApp {
       (index) => this.toggleLike(index),
       (index) => this.replyToComment(index)
     );
-  }
 
-  showLoadingMessage() {
-    const commentsList = document.querySelector(".comments");
-    const loadingMessage = document.createElement("div");
-    loadingMessage.classList.add("initial-loading-message");
-    loadingMessage.textContent = "Пожалуйста подождите,загружаю комментарии…";
-    loadingMessage.style.fontSize = "24px";
-    loadingMessage.style.color = "#ffffff";
-    loadingMessage.style.marginTop = "40px";
-    commentsList.innerHTML = "";
-    commentsList.appendChild(loadingMessage);
-  }
-
-  hideLoadingMessage() {
-    const loadingMessage = document.querySelector(".initial-loading-message");
-    if (loadingMessage) {
-      loadingMessage.remove();
-    }
+    addLikeHandlers((index) => this.toggleLike(index));
   }
 }
 
