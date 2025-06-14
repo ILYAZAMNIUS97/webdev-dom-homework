@@ -15,7 +15,7 @@ class CommentsApp {
     this.showLoadingMessage();
 
     try {
-      this.comments = await fetchComments(); // Загружаем комментарии из API
+      this.comments = await fetchComments();
     } catch (e) {
       console.error("Не удалось загрузить комментарии", e);
     } finally {
@@ -62,7 +62,7 @@ class CommentsApp {
     this.loadingMessageElement.textContent =
       "Пожалуйста подождите, загружаю комментарии...";
     this.loadingMessageElement.style.fontSize = "24px";
-    this.loadingMessageElement.style.color = "#ffffff"; // Белый цвет
+    this.loadingMessageElement.style.color = "#ffffff";
     this.loadingMessageElement.style.marginTop = "40px";
     commentsList.innerHTML = "";
     commentsList.appendChild(this.loadingMessageElement);
