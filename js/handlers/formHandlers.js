@@ -1,21 +1,26 @@
-// js/handlers/formHandlers.js
 import { getCurrentDateTime } from "../utils/dateTime.js";
 
 export const addFormHandlers = (onSubmit) => {
   const formContainer = document.querySelector(".add-form");
-  const addButton = document.querySelector(".add-form-button");
   const nameInput = document.querySelector(".add-form-name");
   const commentTextarea = document.querySelector(".add-form-text");
+  const addButton = document.querySelector(".add-form-button");
 
   let userName = "";
   let commentText = "";
 
+  // Восстанавливаем из localStorage или из переменных
+  nameInput.value = localStorage.getItem("userName") || "";
+  commentTextarea.value = localStorage.getItem("commentText") || "";
+
   nameInput.addEventListener("input", () => {
     userName = nameInput.value;
+    localStorage.setItem("userName", userName);
   });
 
   commentTextarea.addEventListener("input", () => {
     commentText = commentTextarea.value;
+    localStorage.setItem("commentText", commentText);
   });
 
   const showLoadingMessage = () => {
@@ -39,7 +44,7 @@ export const addFormHandlers = (onSubmit) => {
 
   addButton.addEventListener("click", async () => {
     if (userName.trim().length < 3 || commentText.trim().length < 3) {
-      alert("Имя и текст должны быть не короче 3 символов");
+      alert("Имя и комментарий должны быть не короче 3 символов");
       return;
     }
 
@@ -53,40 +58,45 @@ export const addFormHandlers = (onSubmit) => {
           body: JSON.stringify({
             name: userName,
             text: commentText,
+            //forceError: true,//
           }),
         }
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        console.error(
-          "Ошибка от сервера:",
-          errorData?.error || "Неизвестная ошибка"
-        );
-
-        hideLoadingMessage();
+        if (response.status === 400) {
+          const errorData = await response.json();
+          alert(
+            errorData.error ||
+              "Имя и комментарий должны быть не короче 3 символов"
+          );
+        } else if (response.status === 500) {
+          alert("Сервер сломался, попробуй позже");
+        }
         return;
       }
 
       const result = await response.json();
       if (result.result === "ok") {
-        const newComment = {
+        onSubmit({
           name: userName,
           date: getCurrentDateTime(),
           text: commentText,
           likes: 0,
           isLiked: false,
-        };
-        onSubmit(newComment);
+        });
+
+        // Очищаем поля только после успешной отправки
         nameInput.value = "";
         commentTextarea.value = "";
         userName = "";
         commentText = "";
-      } else {
-        console.error("Неожиданный ответ от сервера", result);
+        localStorage.removeItem("userName");
+        localStorage.removeItem("commentText");
       }
     } catch (error) {
-      console.error("Ошибка сети или сериализации:", error);
+      console.error("Ошибка сети:", error);
+      alert("Кажется, у вас сломался интернет, попробуйте позже");
     } finally {
       hideLoadingMessage();
     }
@@ -96,6 +106,7 @@ export const addFormHandlers = (onSubmit) => {
     setCommentText: (text) => {
       commentTextarea.value = text;
       commentText = text;
+      localStorage.setItem("commentText", commentText);
     },
   };
 };
