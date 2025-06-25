@@ -1,6 +1,6 @@
 import { getCurrentDateTime } from "../utils/dateTime.js";
 
-// Функция отправки комментария с возможностью повтора
+// Функция отправки комментария с возможностью повтора при 500 ошибке
 const postComment = async (name, text) => {
   const MAX_RETRIES = 3;
   let retries = 0;
@@ -8,7 +8,7 @@ const postComment = async (name, text) => {
   while (retries <= MAX_RETRIES) {
     try {
       const response = await fetch(
-        "https://wedev-api.sky.pro/api/v1/ilya-zamnius/comments",
+        "https://wedev-api.sky.pro/api/v1/ilya-zamnius/comments ",
         {
           method: "POST",
           body: JSON.stringify({ name, text, forceError: true }),
@@ -30,10 +30,10 @@ const postComment = async (name, text) => {
 
       if (error.message === "Ошибка сервера" && retries <= MAX_RETRIES) {
         console.log(`Попытка ${retries} из ${MAX_RETRIES}...`);
-        continue; // Повторяем запрос
+        continue; // Пробуем снова
       }
 
-      throw error; // Пробрасываем дальше другие ошибки
+      throw error; // Пробрасываем другие ошибки
     }
   }
 };
@@ -81,11 +81,6 @@ export const addFormHandlers = (onSubmit) => {
   };
 
   const handlePostClick = async () => {
-    if (userName.trim().length < 3 || commentText.trim().length < 3) {
-      alert("Имя и комментарий должны быть не короче 3 символов");
-      return;
-    }
-
     showLoadingMessage();
 
     try {
@@ -99,7 +94,7 @@ export const addFormHandlers = (onSubmit) => {
         isLiked: false,
       });
 
-      // Очищаем форму после успешной отправки
+      // Очищаем форму только после успешной отправки
       nameInput.value = "";
       commentTextarea.value = "";
       userName = "";
@@ -112,7 +107,7 @@ export const addFormHandlers = (onSubmit) => {
       } else if (error.message.includes("Failed to fetch")) {
         alert("Кажется, у вас сломался интернет, попробуйте позже");
       } else {
-        alert(error.message);
+        alert(error.message); // ← Здесь будут ошибки от сервера, например: "text должен содержать хотя бы 3 символа"
       }
     } finally {
       hideLoadingMessage();
