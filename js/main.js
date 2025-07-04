@@ -10,25 +10,20 @@ class CommentsApp {
     this.comments = [];
     this.user = null;
     this.token = localStorage.getItem("token") || null;
-    this.isAuth = false;
+    this.isAuth = !!this.token;
+
+    // Для теста можно добавить начального пользователя
+    if (this.token && !this.user) {
+      this.user = { name: "Админ" };
+    }
+
     this.init();
   }
 
   async init() {
-    await this.checkAuth();
     await this.loadComments();
     this.renderInitialView();
-  }
-
-  async checkAuth() {
-    if (this.token) {
-      try {
-        // Простая проверка токена (без запроса к серверу для экономии времени)
-        this.isAuth = true;
-      } catch (e) {
-        this.handleLogout();
-      }
-    }
+    this.setupAuthLinkHandler();
   }
 
   async loadComments() {
@@ -41,13 +36,14 @@ class CommentsApp {
 
   renderInitialView() {
     const container = document.querySelector(".container");
+    if (!container) return;
+
     container.innerHTML = `
       <ul class="comments"></ul>
       ${this.isAuth ? this.renderCommentForm() : this.renderAuthPrompt()}
     `;
 
     this.renderComments();
-    this.setupAuthLinkHandler();
   }
 
   renderAuthPrompt() {
@@ -77,6 +73,13 @@ class CommentsApp {
       (index) => this.replyToComment(index)
     );
     addLikeHandlers((index) => this.toggleLike(index));
+
+    if (this.isAuth) {
+      addFormHandlers(
+        (newComment) => this.addComment(newComment),
+        this.user?.name
+      );
+    }
   }
 
   renderLoginPage() {
@@ -87,9 +90,11 @@ class CommentsApp {
   }
 
   setupAuthLinkHandler() {
-    document.querySelector(".auth-link")?.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.renderLoginPage();
+    document.addEventListener("click", (e) => {
+      if (e.target.classList.contains("auth-link")) {
+        e.preventDefault();
+        this.renderLoginPage();
+      }
     });
   }
 
@@ -99,15 +104,40 @@ class CommentsApp {
       this.user = { name: data.user.name };
       this.token = data.user.token;
       this.isAuth = true;
+
       localStorage.setItem("token", this.token);
+      localStorage.setItem("userName", this.user.name);
+
       await this.loadComments();
       this.renderInitialView();
     } catch (error) {
       alert(error.message);
+      this.renderLoginPage();
     }
   }
 
-  // ... остальные методы (toggleLike, replyToComment и т.д.)
+  addComment(comment) {
+    this.comments = [comment, ...this.comments];
+    this.renderComments();
+  }
+
+  toggleLike(index) {
+    this.comments[index].isLiked = !this.comments[index].isLiked;
+    this.comments[index].likes += this.comments[index].isLiked ? 1 : -1;
+    this.renderComments();
+  }
+
+  replyToComment(index) {
+    if (!this.isAuth) return;
+    const textarea = document.querySelector(".add-form-text");
+    if (textarea) {
+      textarea.value = `> ${this.comments[index].name}: ${this.comments[index].text}\n`;
+      textarea.focus();
+    }
+  }
 }
 
-new CommentsApp();
+// Инициализация приложения
+document.addEventListener("DOMContentLoaded", () => {
+  new CommentsApp();
+});
