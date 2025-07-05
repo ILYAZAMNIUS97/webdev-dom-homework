@@ -31,11 +31,11 @@ export const fetchComments = async (token = null) => {
       text: comment.text,
       likes: comment.likes,
       isLiked: comment.isLiked || false,
-      author: comment.author, // сохраняем всю информацию об авторе
+      author: comment.author,
     }));
   } catch (error) {
     console.error("Не удалось загрузить комментарии:", error);
-    throw error; // Пробрасываем ошибку для обработки в компоненте
+    throw error;
   }
 };
 

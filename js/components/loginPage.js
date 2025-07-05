@@ -10,7 +10,6 @@ export const renderLoginPage = (onLogin) => {
     </div>
   `;
 
-  // Добавляем обработчик после рендера
   setTimeout(() => {
     const form = document.querySelector(".login-form");
     const loginInput = document.querySelector(".login-input");
@@ -18,7 +17,7 @@ export const renderLoginPage = (onLogin) => {
 
     if (form) {
       form.addEventListener("submit", (e) => {
-        e.preventDefault(); // Предотвращаем перезагрузку страницы
+        e.preventDefault();
 
         const login = loginInput.value.trim();
         const password = passwordInput.value.trim();

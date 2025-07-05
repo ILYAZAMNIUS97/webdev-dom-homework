@@ -12,7 +12,6 @@ class CommentsApp {
     this.token = localStorage.getItem("token") || null;
     this.isAuth = !!this.token;
 
-    // Для теста можно добавить начального пользователя
     if (this.token && !this.user) {
       this.user = { name: "Админ" };
     }
@@ -137,7 +136,6 @@ class CommentsApp {
   }
 }
 
-// Инициализация приложения
 document.addEventListener("DOMContentLoaded", () => {
   new CommentsApp();
 });

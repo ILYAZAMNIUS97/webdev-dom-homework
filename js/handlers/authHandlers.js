@@ -14,7 +14,6 @@ export const loginUser = async (login, password) => {
     });
 
     if (!response.ok) {
-      // Если ответ не успешный, пробуем получить текст ошибки
       const errorText = await response.text();
       console.error("Ошибка ответа сервера:", errorText);
       throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
@@ -22,7 +21,6 @@ export const loginUser = async (login, password) => {
 
     const data = await response.json();
 
-    // Сохраняем токен и информацию о пользователе
     localStorage.setItem("authToken", data.user.token);
     localStorage.setItem("userName", data.user.name);
 
