@@ -158,7 +158,13 @@ body {
 .login-container {
   width: 400px;
   padding: 40px;
-  background: #2a2a2a;
+  background: radial-gradient(
+    75.42% 75.42% at 50% 42.37%,
+    rgba(53, 53, 53, 0) 22.92%,
+    #7334ea 100%
+  );
+  filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
+  border-radius: 20px;
   border-radius: 20px;
   margin-top: 50px;
 }
@@ -172,9 +178,9 @@ body {
 .login-button,
 .register-button {
   padding: 10px 20px;
-  border: none;
   border-radius: 8px;
   cursor: pointer;
+  margin-top: 15px;
 }
 
 .login-button {
@@ -195,4 +201,8 @@ body {
 .auth-link {
   color: #bcec30;
   text-decoration: none;
+}
+
+.auth-prompt {
+  margin-top: 15px;
 }
